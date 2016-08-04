@@ -13,11 +13,11 @@ Add `require` and `repositories` sections to your composer.json as shown in exam
     ...
     
     "repositories": [
-        {"type": "git", "url": "https://github.com/kirchbergerknorr/kirchbergerknorr/Kirchbergerknorr_RewriteChecker"},
+        {"type": "git", "url": "https://github.com/kirchbergerknorr/Magento_RewriteChecker"},
     ],
     
     "require": {
-        "kirchbergerknorr/kirchbergerknorr/Kirchbergerknorr_RewriteChecker": "*"
+        "kirchbergerknorr/Magento_RewriteChecker": "*"
     },
     
     ...
