@@ -112,6 +112,17 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </cron>
+                        <max_fix translate="label">
+                            <label>Maximum ids to fix per type and cron execution</label>
+                            <comment>
+                                <![CDATA[Depens on how many products you have and the performace of your hosting.]]>
+                            </comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_fix>
                     </fields>
                 </rewrite_check>
             </groups>

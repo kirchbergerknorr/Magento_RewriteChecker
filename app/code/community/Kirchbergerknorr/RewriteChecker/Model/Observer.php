@@ -22,12 +22,25 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
     protected $rewriteModel;
 
     /**
+     * @var int $fixedCount                         Counter of fixed entries
+     */
+    protected $fixedCount;
+
+    /**
+     * @var int $maxFix                             Counter of max ids to fix
+     */
+    protected $maxFix;
+
+
+
+    /**
      * Kirchbergerknorr_RewriteChecker_Model_Observer constructor.
      */
     public function __construct()
     {
         $this->read = Mage::getSingleton( 'core/resource' )->getConnection( 'core_read' );
         $this->rewriteModel = Mage::getModel( 'catalog/url' );
+        $this->maxFix = Mage::getStoreConfig('kirchbergerknorr/rewrite_check/max_fix');
     }
 
 
@@ -92,8 +105,13 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         $this->log(count($missingRewrites) . " missing category rewrites found.");
 
         if(Mage::getStoreConfig('kirchbergerknorr/rewrite_check/fix_categories')) {
+            $this->fixedCount = 0;
             foreach ($missingRewrites as $id) {
                 $this->triggerUrlRewrite('category', $id);
+
+                if($this->fixedCount++ >= $this->maxFix) {
+                    break;
+                }
             }
         } else {
             $this->log("Category URL fixing disabled - skip.");
@@ -123,8 +141,13 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         $this->log(count($missingRewrites) . " missing product rewrites found.");
 
         if(Mage::getStoreConfig('kirchbergerknorr/rewrite_check/fix_products')) {
+            $this->fixedCount = 0;
             foreach ($missingRewrites as $id) {
                 $this->triggerUrlRewrite('product', $id);
+
+                if($this->fixedCount++ >= $this->maxFix) {
+                    break;
+                }
             }
         } else {
             $this->log("Product URL fixing disabled - skip.");

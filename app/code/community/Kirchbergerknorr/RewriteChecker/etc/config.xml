@@ -11,6 +11,7 @@
                 <active>1</active>
                 <log>1</log>
                 <cron>0 1 * * *</cron>
+                <max_fix>20</max_fix>
             </rewrite_check>
         </kirchbergerknorr>
     </default>
