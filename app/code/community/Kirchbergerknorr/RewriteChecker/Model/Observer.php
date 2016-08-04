@@ -39,6 +39,7 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
     public function checkRewrites() {
 
         if (!Mage::getStoreConfig('kirchbergerknorr/rewrite_check/active')) {
+            $this->log("Rewrite Checker disabled - exit");
             return;
         }
 
@@ -73,11 +74,20 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
      */
     public function checkCategoryRewrites()
     {
-        $categoryIds = Mage::getModel('catalog/category')->getCollection()->getAllIds();
+        // Get all active category ids
+        $categoryIds = Mage::getModel('catalog/category')
+            ->getCollection()
+            ->addAttributeToFilter('is_active', 1)
+            ->getAllIds();
+
+        // Get existing rewrites from table
         $existingRewrites = $this->getUrlRewrites('category');
 
+        // Get category ids which should be ignored
+        $ignoreIds = explode(',', Mage::getStoreConfig('kirchbergerknorr/rewrite_check/ignore_categories'));
+
         // Check array diff to get category ids with no rewrite
-        $missingRewrites = $result = array_diff($categoryIds, $existingRewrites);
+        $missingRewrites = $result = array_diff($categoryIds, $existingRewrites, $ignoreIds);
 
         $this->log(count($missingRewrites) . " missing category rewrites found.");
 
@@ -85,6 +95,8 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
             foreach ($missingRewrites as $id) {
                 $this->triggerUrlRewrite('category', $id);
             }
+        } else {
+            $this->log("Category URL fixing disabled - skip.");
         }
     }
 
@@ -93,11 +105,20 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
      */
     public function checkProductRewrites()
     {
-        $productIds = Mage::getModel('catalog/product')->getCollection()->getAllIds();
+        // Get all active product ids
+        $productIds = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToFilter('is_active', 1)
+            ->getAllIds();
+
+        // Get existing rewrites from table
         $existingRewrites = $this->getUrlRewrites('product');
 
+        // Get product ids which should be ignored
+        $ignoreIds = explode(',', Mage::getStoreConfig('kirchbergerknorr/rewrite_check/ignore_products'));
+
         // Check array diff to get product ids with no rewrite
-        $missingRewrites = $result = array_diff($productIds, $existingRewrites);
+        $missingRewrites = $result = array_diff($productIds, $existingRewrites, $ignoreIds);
 
         $this->log(count($missingRewrites) . " missing product rewrites found.");
 
@@ -105,6 +126,8 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
             foreach ($missingRewrites as $id) {
                 $this->triggerUrlRewrite('product', $id);
             }
+        } else {
+            $this->log("Product URL fixing disabled - skip.");
         }
     }
 
@@ -119,26 +142,16 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         $urlRewriteTable = Mage::getSingleton( 'core/resource' )->getTableName( 'core_url_rewrite' );
 
         if('product' == $type) {
-            $query = "SELECT DISTINCT(category_id) FROM " . $urlRewriteTable . " WHERE product_id IS :product_id AND category_id is :category_id";
-
-            $binds = array(
-                'product_id' => "NOT NULL",
-                'category_id' => "NULL"
-            );
+            $query = "SELECT DISTINCT(product_id) FROM " . $urlRewriteTable . " WHERE product_id IS NOT NULL AND category_id is NULL";
         } else if('category' == $type) {
-            $query = "SELECT DISTINCT(category_id) FROM " . $urlRewriteTable . " WHERE category_id IS :category_id AND product_id is :product_id;";
-
-            $binds = array(
-                'category_id' => "NOT NULL",
-                'product_id' => "NULL"
-            );
+            $query = "SELECT DISTINCT(category_id) FROM " . $urlRewriteTable . " WHERE category_id IS NOT NULL AND product_id IS NULL";
         } else {
             $this->log("No type to check set - exit.");
             return false;
         }
 
         try {
-            $result = $this->read->query( $query, $binds );
+            $result = $this->read->fetchCol( $query );
         } catch (Exception $e) {
             Mage::logException($e);
         }
@@ -156,8 +169,10 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
     protected function triggerUrlRewrite($type, $id)
     {
         if('category' == $type) {
+            $this->log("Triggered rewrite for category $id");
             $this->rewriteModel->refreshCategoryRewrite($id, null, false);
         } else if ('product' == $type) {
+            $this->log("Triggered rewrite for product $id");
             $this->rewriteModel->refreshProductRewrite($id);
         } else {
             $this->log("No type to generate set - exit.");
