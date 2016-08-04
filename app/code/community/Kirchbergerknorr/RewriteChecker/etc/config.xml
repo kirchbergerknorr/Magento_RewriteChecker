@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kirchbergerknorr_RewriteChecker>
+            <version>0.1.0</version>
+        </Kirchbergerknorr_RewriteChecker>
+    </modules>
+    <default>
+        <kirchbergerknorr>
+            <rewrite_check>
+                <active>1</active>
+                <log>1</log>
+                <cron>0 1 * * *</cron>
+            </rewrite_check>
+        </kirchbergerknorr>
+    </default>
+    <global>
+        <models>
+            <rewrite_check>
+                <class>Kirchbergerknorr_RewriteChecker_Model</class>
+            </rewrite_check>
+        </models>
+    </global>
+    <crontab>
+        <jobs>
+            <kk_rewrite_check_job>
+                <schedule>
+                    <config_path>kirchbergerknorr/rewrite_check/cron</config_path>
+                </schedule>
+                <run>
+                    <model>rewrite_check/observer::checkRewrites</model>
+                </run>
+            </kk_rewrite_check_job>
+        </jobs>
+    </crontab>
+    <adminhtml>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <rewrite_check>
+                                            <title>Kirchbergerknorr Rewrite Checker</title>
+                                        </rewrite_check>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

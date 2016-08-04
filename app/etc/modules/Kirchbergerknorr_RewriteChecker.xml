@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kirchbergerknorr_RewriteChecker>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Kirchbergerknorr_RewriteChecker>
+    </modules>
+</config>
