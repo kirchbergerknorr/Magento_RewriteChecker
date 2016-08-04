@@ -50,6 +50,15 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </check_categories>
+                        <fix_categories translate="label">
+                            <label>Fix missing Category URL rewrites</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </fix_categories>
                         <check_products translate="label">
                             <label>Check Product URLs</label>
                             <frontend_type>select</frontend_type>
@@ -59,6 +68,15 @@
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
                         </check_products>
+                        <fix_products translate="label">
+                            <label>Fix missing Product URL rewrites</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </fix_products>
                         <cron translate="label">
                             <label>Sync Cron Expr</label>
                             <comment>

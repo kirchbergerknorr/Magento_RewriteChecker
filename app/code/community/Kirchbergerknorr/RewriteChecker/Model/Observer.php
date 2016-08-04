@@ -49,7 +49,7 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         }
 
         if (Mage::getStoreConfig('kirchbergerknorr/rewrite_check/check_products')) {
-            $this->checkroductRewrites();
+            $this->checkProductRewrites();
         } else {
             $this->log("Product rewrite check is INACTIVE - exit.");
         }
@@ -80,6 +80,12 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         $missingRewrites = $result = array_diff($categoryIds, $existingRewrites);
 
         $this->log(count($missingRewrites) . " missing category rewrites found.");
+
+        if(Mage::getStoreConfig('kirchbergerknorr/rewrite_check/fix_categories')) {
+            foreach ($missingRewrites as $id) {
+                $this->triggerUrlRewrite('category', $id);
+            }
+        }
     }
 
     /**
@@ -94,6 +100,12 @@ class Kirchbergerknorr_RewriteChecker_Model_Observer
         $missingRewrites = $result = array_diff($productIds, $existingRewrites);
 
         $this->log(count($missingRewrites) . " missing product rewrites found.");
+
+        if(Mage::getStoreConfig('kirchbergerknorr/rewrite_check/fix_products')) {
+            foreach ($missingRewrites as $id) {
+                $this->triggerUrlRewrite('product', $id);
+            }
+        }
     }
 
     /**
