@@ -1,6 +1,8 @@
 # Kirchbergerknorr RewriteChecker
 
 This module checks if all urls for categories and products are rewritten and if not, trigger the url rewrite generation.
+It gets all the existing rewrites from the core_url_rewrite table and checks if the found ids have a diff with the existing
+product or category ids. If so, the indexing of these entities is triggered.
 
 ## Installation
 
